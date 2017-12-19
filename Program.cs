@@ -10,23 +10,21 @@ namespace NameBasedUUIDSpike
 
         static void Main(string[] args)
         {
-            try
-            {
-                long progress = 0;
-                Combination("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", value => {
-                    var a = GuidUtility.Create(UuidNamespace, value);
-                    Generated.Add(UuidNamespace);
-
-                    if(++progress%10000 == 0)
+            ulong progress = 0;
+            Combination("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", value => {
+                var newGuid = GuidUtility.Create(UuidNamespace, value);
+                if(Generated.Add(newGuid))
+                {
+                    if(++progress%1000000 == 0)
                     {
                         Console.WriteLine($"Generated {progress} UUIDs under namespace {UuidNamespace}");
                     }
-                });
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine($"Possible collission. Error: {ex.Message}");
-            }
+                }
+                else
+                {
+                    Console.WriteLine($"{newGuid} has already been generated");
+                }
+            });
 
             Console.WriteLine("Done");
             Console.ReadLine();
